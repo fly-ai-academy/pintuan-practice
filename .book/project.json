@@ -1,0 +1,12 @@
+{
+  "site": "https://flyger.xyz",
+  "projectId": "ce6bed38-0ebf-4450-8b54-2ad17c38755d",
+  "projectName": "拼团",
+  "role": "teaching-template",
+  "connectionStatus": "pending-pairing",
+  "repository": {
+    "fullName": "wzf1997/pintuan-practice",
+    "defaultBranch": "main",
+    "visibility": "private"
+  }
+}

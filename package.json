@@ -1,0 +1,19 @@
+{
+  "name": "pintuan-practice",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "check": "deliveryguard check",
+    "harness:status": "deliveryguard status",
+    "guild:connect": "node scripts/book-collaboration/cli.mjs up --site https://flyger.xyz --project ce6bed38-0ebf-4450-8b54-2ad17c38755d",
+    "guild:status": "node scripts/book-collaboration/cli.mjs status",
+    "guild:sync": "node scripts/book-collaboration/cli.mjs sync-sources"
+  },
+  "devDependencies": {
+    "deliveryguard": "0.5.0"
+  }
+}
