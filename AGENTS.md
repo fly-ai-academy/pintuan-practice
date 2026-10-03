@@ -20,6 +20,16 @@ Keep these claims distinct: planned, specified, implemented, verified, and relea
 
 Infer low-impact details from repository facts. Ask only when missing information changes behavior, target, authorization, security, or an external result.
 
+## Teaching monorepo
+
+- Package manager: pnpm 10.34.6 (the root `packageManager`); use the root `pnpm-lock.yaml`, not npm/yarn lockfiles. Node follows `.nvmrc` and root engines.
+- `packages/web`: Next.js App Router. `pnpm dev` starts only this application on port 3000. It must remain usable without Nest, databases, credentials, or external services.
+- `packages/server`: Nest.js, optional in the first learning stage. `pnpm dev:server` starts it on port 3001; `pnpm dev:full` starts both applications. Its initial `/api/health` is an infrastructure example, not a business endpoint.
+- `packages/contracts`: shared types and pure helpers. Keep framework, environment, credentials, and server-only dependencies out of it. Build it before consuming its `dist` outputs; declare package dependencies with `workspace:*`.
+- `docs/design` is the canonical HTML prototype. Web predev/prebuild copies it into ignored `public/prototype`; edit the source, not the generated copy. Keep prototype simulation distinct from implemented product behavior.
+- Read `docs/design/monorepo.md` for architecture and startup instructions. Relevant checks: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test:smoke`, and `pnpm check`. Smoke tests require a build and manage only their own processes on temporary ports.
+- Framework setup does not complete PRD tasks, acceptance, or releases. Business implementation still requires the learner Feishu prerequisite and the version/specification workflow below.
+
 ## DeliveryGuard facts
 
 Read `deliveryguard.config.json` before changing delivery records.
@@ -43,6 +53,12 @@ planned -> specified -> implemented -> verified -> released
 - Missing evidence remains missing or `pending`; never invent commits, URLs, timestamps, reports, or deployments.
 
 ## Version and specification workflow
+
+### Learner Feishu prerequisite
+
+Every learner must complete `docs/feishu-cli-setup.md` before implementing a task: install the official `lark-cli` and skills, create their own Feishu app/bot through the developer console, configure a separate named profile, authorize their own user identity, and successfully read the registered primary and version PRDs. Creating a bot alone does not grant document access.
+
+Use an explicit learner-owned `--profile` and `--as user`. Never reuse teacher app secrets, tokens, profiles, or another learner's login. Read the version-matched embedded Feishu skill before invoking document commands. Use `read-prds --file .deliveryguard/versions/v1.0.0.json --profile <learner-profile>` for the local version record; use the connected platform only when its current version registers the actual Feishu links. Record the original URLs and real revisions, never secrets or full private document dumps. If original documents cannot be read, resolve installation, app scopes, user authorization, or sharing first; do not implement from a stale site copy or invent requirements. Read success is not product approval, acceptance, or release permission.
 
 Register every in-scope requirement document, exactly one primary requirement when policy requires it, affected repositories, and the linked OpenSpec change. Do not add unplanned requirements to a closed release.
 

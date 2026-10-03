@@ -3,6 +3,7 @@ import { resolve, sep } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { sourceGitReader } from './source-git.mjs'
+import { isFeishuPrd } from './prds.mjs'
 
 export function sourceDigest(value) {
   const canonical = (v) => Array.isArray(v) ? v.map(canonical) : v && typeof v === 'object'
@@ -51,7 +52,7 @@ export async function scanProject(directory = process.cwd(), options = {}) {
   for (const doc of current.documents || []) {
     const internal = typeof doc.url === 'string' && doc.url.startsWith(`/collaboration/${options.projectId}/documents/`) && doc.url.split('/').length === 5 && /^[a-f0-9-]{36}$/.test(doc.url.split('/').at(-1))
     const repoDoc = typeof doc.url === 'string' && doc.url.startsWith(`https://github.com/${expected}/blob/`) && !/[?#]/.test(doc.url)
-    if (!internal && !repoDoc) { warnings.push(`忽略不属于本项目的文档链接：${doc.title}`); continue }
+    if (!internal && !repoDoc && !isFeishuPrd(doc.url)) { warnings.push(`忽略不属于本项目的文档链接：${doc.title}`); continue }
     const localHash = ''
     add([version, doc.url], 'DOCUMENT', doc.title, `文档职责：${doc.type}；登记 revision：${doc.revision ?? '未登记'}。这是项目登记信息，未回读远端文档，不代表最新内容或审核通过。`,
       'version-manifest.json', `登记 revision ${doc.revision ?? '未知'}`, sourceDigest({ doc, localHash }), version, doc.url)

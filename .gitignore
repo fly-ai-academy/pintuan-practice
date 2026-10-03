@@ -4,3 +4,8 @@ node_modules/
 !.env.example
 .DS_Store
 *.log
+.next/
+dist/
+*.tsbuildinfo
+coverage/
+packages/web/public/prototype/

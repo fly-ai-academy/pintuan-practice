@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "version": "v1.0.0",
+  "title": "拼团哇 V1.0｜团长创建与发布拼团",
+  "documents": [
+    {
+      "id": "pintuanwa-overview",
+      "type": "product-requirement",
+      "title": "拼团哇｜产品总文档",
+      "ref": "https://my.feishu.cn/docx/QKjbdlKe7o5j53xNQ6jc00ClnEf",
+      "primary": true
+    },
+    {
+      "id": "pintuanwa-prd-01",
+      "type": "product-requirement",
+      "title": "团长创建与发布拼团",
+      "ref": "https://my.feishu.cn/docx/QveDdQzFCotJ30xrivIcPhGvnoh",
+      "primary": false
+    }
+  ],
+  "openSpec": {
+    "changeId": "pintuanwa-v1",
+    "path": "openspec/changes/pintuanwa-v1",
+    "status": "proposed"
+  },
+  "sources": [],
+  "acceptance": {
+    "status": "pending"
+  },
+  "deployments": [],
+  "release": {
+    "status": "pending"
+  }
+}

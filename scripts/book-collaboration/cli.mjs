@@ -5,6 +5,7 @@ import { existsSync, writeFileSync, unlinkSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { synchronizeProject } from './sources.mjs'
+import { readFeishuPrds, versionPrds } from './prds.mjs'
 import { call, siteUrl } from './client.mjs'
 import { workspace, loadConfig, bindingPath, profileDirectory, privateWrite, readJson, git, origin, branch, commitInput } from './local.mjs'
 
@@ -12,7 +13,12 @@ const argv = process.argv.slice(2); const command = argv[0] || 'help'
 const flag = name => { const index = argv.indexOf(name); return index >= 0 ? argv[index + 1] : undefined }
 const output = data => process.stdout.write(`${JSON.stringify(data, null, 2)}\n`)
 async function main() {
-  if (command === 'help') return output({ commands: ['up --site URL --project ID', 'down', 'status', 'bind CHG-ID', 'show [CHG-ID]', 'task --file JSON', 'progress PHASE --note TEXT', 'prepare-commit [--commit SHA]', 'authorize --staged | --commit SHA', 'verify --commit SHA', 'artifacts --base SHA', 'run-check -- COMMAND ARGS', 'evidence-ci', 'readback --file JSON', 'version-sync', 'sync-sources', 'request ACTION --file JSON', 'install-hooks'], scope: '仅访问配置的 book 站点；不会自动审批、push、merge 或部署' })
+  if (command === 'read-prds' && flag('--file')) {
+    const manifest = readJson(resolve(flag('--file')))
+    if (!Array.isArray(manifest.documents)) throw new Error('登记文件缺少 documents')
+    return output({ documents: readFeishuPrds(manifest.documents, flag('--profile')) })
+  }
+  if (command === 'help') return output({ commands: ['up --site URL --project ID', 'down', 'status', 'bind CHG-ID', 'show [CHG-ID] --profile 本人飞书配置', 'read-prds --profile 本人飞书配置 [--file 版本登记.json]', 'task --file JSON', 'progress PHASE --note TEXT', 'prepare-commit [--commit SHA]', 'authorize --staged | --commit SHA', 'verify --commit SHA', 'artifacts --base SHA', 'run-check -- COMMAND ARGS', 'evidence-ci', 'readback --file JSON', 'version-sync', 'sync-sources', 'request ACTION --file JSON', 'install-hooks'], scope: '仅访问配置的 book 站点；不会自动审批、push、merge 或部署' })
   const cwd = workspace(flag('--directory') || process.cwd())
   if (command === 'up') {
     const existing = existsSync(bindingPath(cwd)) ? readJson(bindingPath(cwd)) : {}
@@ -52,6 +58,7 @@ async function main() {
     return output(await call(config, 'device.offline'))
   }
   const snapshot = await call(config, 'snapshot')
+  if (command === 'read-prds') return output({ productVersion: snapshot.project.productVersion, documents: readFeishuPrds(versionPrds(snapshot), flag('--profile')) })
   if (command === 'sync-sources') {
     const fullName = origin(cwd).replace(/^git@github\.com:|^https:\/\/github\.com\//, '').replace(/\.git$/, '')
     const repo = snapshot.project.integrations?.repositories.find(r => r.fullName.toLowerCase() === fullName.toLowerCase())
@@ -66,13 +73,14 @@ async function main() {
   const fileBody = () => { const file = flag('--file'); if (!file) throw new Error('需要 --file JSON'); return readJson(resolve(file)) }
   if (command === 'bind') {
     requireChange()
+    const productDocuments = readFeishuPrds(versionPrds(snapshot), flag('--profile'))
     await call(config, 'device.heartbeat', { changeId: change.id })
     const policy = await call(config, 'version.join', { changeId: change.id, origin: origin(cwd), branch: branch(cwd) })
     if (policy.binding?.branch !== branch(cwd)) throw new Error(`需在绑定分支 ${policy.binding?.branch} 工作；未自动切换分支`)
     privateWrite(bindingPath(cwd), { site: config.site, projectId: config.projectId, changeId: change.id })
-    return output({ bound: change.id, branch: policy.binding.branch })
+    return output({ bound: change.id, branch: policy.binding.branch, productDocuments })
   }
-  if (command === 'show') return output(requireChange())
+  if (command === 'show') return output({ ...requireChange(), productDocuments: readFeishuPrds([...versionPrds(snapshot), ...change.documents], flag('--profile')) })
   if (command === 'task') return output(await call(config, 'task.upsert', fileBody()))
   if (command === 'progress') return output(await call(config, 'change.progress', { changeId: requireChange().id, revision: change.revision, phase: argv[1], handoff: flag('--note') || '' }))
   if (command === 'readback') return output(await call(config, 'readback.propose', { ...fileBody(), changeId: requireChange().id, revision: change.revision, contentHash: change.contentHash }))

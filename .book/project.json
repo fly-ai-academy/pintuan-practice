@@ -5,8 +5,8 @@
   "role": "teaching-template",
   "connectionStatus": "pending-pairing",
   "repository": {
-    "fullName": "wzf1997/pintuan-practice",
+    "fullName": "fly-ai-academy/pintuan-practice",
     "defaultBranch": "main",
-    "visibility": "private"
+    "visibility": "public"
   }
 }

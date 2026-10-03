@@ -5,6 +5,12 @@ description: 在 book 实战项目中以学员本人身份连接 Codex、接手�
 
 # 学员实战协作
 
+## 飞书准备（每位学员必做）
+
+先按仓库的 `docs/feishu-cli-setup.md` 安装官方 `lark-cli` 和 Skills，在 `https://open.feishu.cn/app?lang=zh-CN` 创建学员自己的应用机器人，配置独立命名 profile 并由本人完成用户授权。已有本人应用可复用，不重复创建；不使用教师或其他学员的应用密钥、profile 与登录凭证。机器人创建完成后，还需确认学员本人有原文查看权限，并实际读取主 PRD 和当前版本需求，才能开始实现。
+
+首次接入可用 `read-prds --file .deliveryguard/versions/v1.0.0.json --profile <本人飞书配置>` 读取模板登记的两份原文。平台当前版本登记为真实飞书链接后，再通过平台取得文档列表。调用文档命令前读取 CLI 内置的对应技能；读取时显式使用本人 profile 与 user 身份。协助初始化或登录时按官方 `lark-shared` 的浏览器授权流程执行，授权页面由本人操作；不得把授权链接、device code、密钥或 token 写进仓库。
+
 ## 本人上号
 
 1. 在实战仓库核对适用 AGENTS.md、origin、当前分支和工作区；保留所有无关改动。使用仓库提供的 `scripts/book-collaboration/cli.mjs`，Node 22+。
@@ -17,10 +23,10 @@ description: 在 book 实战项目中以学员本人身份连接 Codex、接手�
 
 ## 接手与实现
 
-1. `show <CHG-ID>` 阅读真实任务、范围、验收条件和负责人，再 `bind <CHG-ID>`。无权限、课程权益撤销、项目停用或分支不符时停止依赖操作。
+1. 接手前先确认学员本人已授权飞书 CLI，并用 `read-prds --profile <本人飞书配置>` 读取当前版本的主 PRD 与关联 PRD。`show <CHG-ID> --profile <本人飞书配置>`、`bind <CHG-ID> --profile <本人飞书配置>` 同样会读取飞书原文。使用真实正文与 revision；无权限或读取失败时先解决本人授权或文档访问问题，不回退到站内副本，不使用老师的凭证。网页登记链接不代表已经读取。
 2. 只在返回的版本开发分支或探索分支工作；不自动覆盖、stash、rebase 或切走脏工作区。探索不能用于发布；由项目管理员在网站转为正式交付。
 3. 使用 `progress IMPLEMENTING --note "真实进展"`、`progress VERIFYING --note "验证情况"` 上报阶段。`task --file <JSON>` 仅在用户授权登记/更新任务时使用稳定 taskKey，更新时保留当前 revision。
-4. PRD 使用站内文档地址和真实数字 revision。`readback --file <JSON>` 只提交实现事实、差异及建议；产品本人在网页逐条判定和确认，Agent 不代批。
+4. PRD 以版本登记的飞书原文链接为准；旧站内修订不能当作飞书 revision。`readback --file <JSON>` 只提交实现事实、差异及建议；产品本人在网页逐条判定和确认，Agent 不代批。平台尚未核验飞书修订时，不能声称正式文档对齐或放行发布。
 
 ## 提交与验证
 
