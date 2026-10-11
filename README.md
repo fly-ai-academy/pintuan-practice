@@ -37,6 +37,16 @@ docs/
 
 构建与检查：`pnpm lint`、`pnpm typecheck`、`pnpm build`、`pnpm test:smoke`、`pnpm check`。更详细的启动、端口和包边界说明见 [monorepo 设计](docs/design/monorepo.md)。
 
+## 个人项目的 GitHub CI
+
+模板没有预先启用 GitHub Actions 工作流。工程底座任务要求学员建立 `harness-check`，运行真实构建、测试和 DeliveryGuard 检查；后续任务以当前合同和平台登记的必需检查为准。这些检查不需要 Book CI token。
+
+学员在个人准备页连接本人 GitHub、授权课程 App 访问实战仓库并完成仓库绑定，按任务要求登记真实提交。Book 回查该提交的必需检查，再由指定教师验收。GitHub 仓库读取授权与 Book CI token 是不同的授权；本地检查通过不能代替 GitHub CI、教师验收或发布。
+
+`scripts/book-collaboration/ci.mjs` 是可选的 Book 提交门禁工具。不要仅因模板包含此脚本就新增 `book-review` / `book-collaboration-gate`、安装 Book Hook 或要求学员配置 CI token。只有项目管理员明确启用额外门禁，或授权 CI 主动上报可信证据、部署记录时，才接入独立 CI 连接；Secret 名称以实际工作流引用为准，不能使用本地 Codex 连接凭证代替。
+
+已有仓库若已启用 Book 门禁，应先核对任务要求、平台必需检查、本地 Hook 和 GitHub 分支保护，再由管理员明确决定是否停用。更新模板或工具不会自动移除这些配置，也不能以缺少 token 为由跳过门禁。
+
 ## 当前边界
 
 已搭建 Next.js、Nest.js 和共享包的基础工程，已登记拼团哇 v1.0.0 产品需求，OpenSpec 为 proposed；尚无业务实现、版本验收或生产交付记录。首页和健康接口属于工程示例，HTML 属于模拟原型；check 通过仅代表登记结构有效。

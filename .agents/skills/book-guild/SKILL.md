@@ -32,9 +32,11 @@ description: 在 book 实战项目中以学员本人身份连接 Codex、接手�
 
 - 先完成范围内本地实现与检查。提交/推送仍分别需要用户授权。
 - `prepare-commit` 上传精确暂存区方案和完整文本差异；`prepare-commit --commit <SHA>` 对已提交代码申请审核。网站人工批准后才能走相应门禁。
-- `install-hooks` 只在用户要求接入门禁时运行，不覆盖既有 Hook。已有 Hook 按接入文档整合。不得使用 `--no-verify` 绕过；CI 还会复核真实提交、任务和回执。
+- `install-hooks` 只在用户要求接入额外 Book 提交门禁时运行，不覆盖既有 Hook。启用此门禁后，需配套可信 CI 复核真实提交、任务和回执；不得使用 `--no-verify` 绕过。
 - `artifacts --base <完整 SHA>` 从干净工作区登记真实提交；`run-check -- <命令> <参数>` 执行检查并上报本地证据，失败不得改成成功。
-- GitHub CI 使用独立 CI 连接。`evidence-ci` 由服务端回查登记的必需检查；不能通过本地 JSON 伪造可信 CI 成功。
+- 个人实战的 GitHub CI 按当前任务合同和平台登记的必需检查执行，例如工程底座任务的 `harness-check`。真实构建、测试和 DeliveryGuard 检查不需要 Book CI token。学员仍须在个人准备页授权课程 GitHub App 访问本人仓库并完成绑定，登记真实候选后由网站回查同一提交 SHA 的检查，再由指定教师验收；本地检查不代表 CI 或验收通过。
+- 不因仓库包含 `ci.mjs` 或门禁示例就默认新增 `book-review` / `book-collaboration-gate`、安装 Hook 或运行 `evidence-ci`。额外 Book 门禁仅在项目管理员明确启用时接入；CI 主动上报可信证据或部署记录也需相应授权和独立 CI 连接。Secret 名称按实际工作流引用配置，不把本地 Codex 凭证用于 CI，也不能通过本地 JSON 伪造可信 CI 成功。
+- 已有 Book 门禁缺少 token 时，报告具体配置缺口。调整前核对任务要求、平台必需检查、本地 Hook 和 GitHub 分支保护；未经管理员明确授权，不删除既有门禁、放宽必需检查或绕过失败。
 - `version-sync` 会查询 GitHub 默认分支并可能封版，只有用户授权登记/收口时运行。
 - 通用 `request <action> --file <JSON>` 仍受服务端身份、任务、版本、revision 和审核约束，不能用于绕过网页人工审批。
 
